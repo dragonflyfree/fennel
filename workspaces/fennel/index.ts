@@ -5,7 +5,7 @@ export const fennel = <
 
     PartialFnInterface = DeepPartial<FnInterface>,
 >(
-    defaultValues: FnInterface extends { fn: any } ? never : FnInterface extends { props: any } ? never : FnInterface,
+    defaultValues: FnInterface extends { fn: any } ? never : FnInterface,
     defaultCallback: Fn,
     merge = deepMerge
 ) => (
@@ -15,10 +15,7 @@ export const fennel = <
             return fennel(args as typeof defaultValues, fn, merge)
         },
 
-        call(vals?: ConsumerInterface | { props?: ConsumerInterface }) {
-            if (vals !== undefined && "props" in vals)
-                vals = vals.props
-
+        call(vals?: ConsumerInterface) {
             const { fn, ...args } = merge({ fn: defaultCallback, ...defaultValues }, vals)
             return fn(args as typeof defaultValues)
         }
