@@ -1,0 +1,22 @@
+{
+  "name": "fennel",
+  "version": "1.0.0",
+  "description": "A recursive function generator that lets you override curried default values and the curried callback.",
+  "keywords": [
+    "curry",
+    "curried",
+    "fennel",
+    "functional",
+    "generator"
+  ],
+  "author": "Claire",
+  "license": "MIT",
+  "module": "index.ts",
+  "type": "module",
+  "devDependencies": {
+    "bun-types": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  }
+}
