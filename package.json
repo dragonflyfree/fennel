@@ -1,4 +1,5 @@
 {
+    "name": "fennel-mono",
     "scripts": {
         "test": "bun test --watch"
     },
