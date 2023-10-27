@@ -1,0 +1,5 @@
+logLevel = "error"
+
+jsx = "react"
+jsxFactory = "Html.createElement"
+jsxFragmentFactory = "Html.Fragment"

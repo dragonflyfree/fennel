@@ -1,0 +1,8 @@
+{
+    "dependencies": {
+        "fennel": "workspace:*"
+    },
+    "devDependencies": {
+        "bun-types": "latest"
+    }
+}
