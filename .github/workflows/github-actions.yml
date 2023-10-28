@@ -13,16 +13,48 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: oven-sh/setup-bun@v1
+      - name: Cache dependencies
+        uses: actions/cache@v3
+        env:
+          cache-name: cache-dependencies
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-dependencies-${{ env.cache-name }}-${{ hashFiles('bun.lockb') }}
+          restore-keys: |
+            ${{ runner.os }}-dependencies-${{ env.cache-name }}-
+            ${{ runner.os }}-dependencies-
+            ${{ runner.os }}-
+
+      - name: Set tag name
+        id: get_tag
+        run: echo "TAG_NAME=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
+
+      - name: Check if tag is in main branch
+        id: check_main_branch
+        run: |
+          if git merge-base --is-ancestor ${{ env.TAG_NAME }} main; then
+            echo "IS_MAIN_BRANCH=true" >> $GITHUB_ENV
+          else
+            echo "IS_MAIN_BRANCH=false" >> $GITHUB_ENV
+          fi
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v1
         with:
           bun-version: latest
-      - run: bun install
-      - run: bun test
 
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '20.x'
-          registry-url: 'https://registry.npmjs.org'
-      - run: npm publish --workspace fennel
+      - name: Update/Install dependencies
+        run: bun update
+
+      - name: Test
+        run: bun test
+
+      - name: Publish
+        run: |
+          if [ "${{ env.IS_MAIN_BRANCH }}" = "true" ]; then
+            npm publish --workspace fennel
+          else
+            npm publish --workspace fennel --tag=beta
+          fi
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
