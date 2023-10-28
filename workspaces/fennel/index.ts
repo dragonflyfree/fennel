@@ -28,11 +28,18 @@ export function deepMerge<TObj, TPartial = DeepPartial<TObj>>(base: TObj, partia
     const result: any = { ...base }
 
     for (const key in partial)
-        if (partial.hasOwnProperty(key))
-            if (typeof partial[key] === "object" && partial[key] !== null && !Array.isArray(partial[key]))
+        if (partial.hasOwnProperty(key) && partial[key] !== undefined)
+
+            if (partial[key] === null)
+                result[key] = null
+
+            else if (Array.isArray(partial[key]))
+                result[key] = result[key].concat(partial[key])
+
+            else if (typeof partial[key] === "object")
                 result[key] = deepMerge(result[key], partial[key] || {})
-            else if (partial[key] !== undefined)
-                result[key] = partial[key]
+
+            else result[key] = partial[key]
 
     return result as TObj
 }

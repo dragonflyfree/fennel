@@ -1,9 +1,9 @@
 {
-    "name": "fennel-examples",
-    "dependencies": {
-        "fennel": "workspace:*"
-    },
-    "devDependencies": {
-        "bun-types": "latest"
-    }
+  "name": "fennel-examples",
+  "dependencies": {
+    "fennel": "workspace:*"
+  },
+  "devDependencies": {
+    "bun-types": "latest"
+  }
 }
