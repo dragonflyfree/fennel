@@ -1,32 +1,30 @@
 export const fennel = <
     FnInterface,
-    Fn extends (vals: FnInterface) => any,
+    Fn extends (args: FnInterface) => any,
     ConsumerInterface extends PartialFnInterface & { fn?: Fn },
 
     PartialFnInterface = DeepPartial<FnInterface>,
 >(
-    defaultValues: FnInterface extends { fn: any } ? never : FnInterface,
-    defaultCallback: Fn,
+    defaultVals: FnInterface extends { fn: any } ? never : FnInterface,
+    defaultFn: Fn,
     merge = deepMerge
 ) => (
     {
-        configure(vals: ConsumerInterface) {
-            const { fn, ...args } = merge({ fn: defaultCallback, ...defaultValues }, vals)
-            return fennel(args as typeof defaultValues, fn, merge)
+        configure(newVals: ConsumerInterface) {
+            const { fn, ...args } = merge({ fn: defaultFn, ...defaultVals }, newVals)
+            return fennel(args as typeof defaultVals, fn, merge)
         },
 
-        call(vals?: ConsumerInterface) {
-            const { fn, ...args } = merge({ fn: defaultCallback, ...defaultValues }, vals)
-            return fn(args as typeof defaultValues)
+        call(newVals?: ConsumerInterface) {
+            const { fn, ...args } = merge({ fn: defaultFn, ...defaultVals }, newVals)
+            return fn(args as typeof defaultVals)
         }
     }
 )
 
-export type DeepPartial<TObj> = {
-    [Key in keyof TObj]?: TObj[Key] extends Record<string, any> ? DeepPartial<TObj[Key]> : TObj[Key]
-}
+export type DeepPartial<TObj> = { [Key in keyof TObj]?: TObj[Key] extends Record<string, any> ? DeepPartial<TObj[Key]> : TObj[Key] }
 
-export function deepMerge<TObj>(base: TObj, partial?: Record<string, any>): TObj {
+export function deepMerge<TObj, TPartial = DeepPartial<TObj>>(base: TObj, partial?: TPartial): TObj {
     const result: any = { ...base }
 
     for (const key in partial)

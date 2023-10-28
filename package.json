@@ -1,7 +1,8 @@
 {
     "name": "fennel-mono",
     "scripts": {
-        "test": "bun test --watch"
+        "test": "bun test --watch",
+        "publish": "bunx publish"
     },
     "workspaces": [
         "workspaces/*"
