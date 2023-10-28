@@ -1,4 +1,4 @@
-logLevel = "error"
+logLevel = "debug"
 
 jsx = "react"
 jsxFactory = "Html.createElement"
