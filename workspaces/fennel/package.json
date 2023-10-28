@@ -1,6 +1,6 @@
 {
 	"name": "fennel",
-	"version": "1.1.1-beta.0",
+	"version": "1.1.1",
 	"description": "A TypeScript recursive function generator that lets you override curried default values and the curried callback.",
 	"keywords": [
 		"curry",
