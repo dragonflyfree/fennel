@@ -49,14 +49,11 @@ jobs:
       - name: Test
         run: bun test
 
-      - name: Update npm
-        run: npm install -g npm
-
       - name: Publish
         uses: JS-DevTools/npm-publish@v3
         with:
           token: ${{ secrets.NPM_TOKEN }}
-          package: fennel
+          package: workspaces/fennel
           tag: ${{ env.IS_MAIN_BRANCH == 'true' && 'latest' || 'beta' }}
 
 
