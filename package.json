@@ -1,7 +1,8 @@
 {
     "name": "fennel-mono",
     "scripts": {
-        "test": "bun test --watch"
+        "dev": "bun --watch run workspaces/examples/index.tsx",
+        "test": "bun --watch test"
     },
     "workspaces": [
         "workspaces/*"

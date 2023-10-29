@@ -1,30 +1,34 @@
 export const fennel = <
-    FnInterface,
-    Fn extends (args: FnInterface) => any,
-    ConsumerInterface extends PartialFnInterface & { fn?: Fn },
+    Values,
+    Callback extends (values: Values) => any,
+    CallHook extends (res: ReturnType<Callback>) => any,
 
-    PartialFnInterface = DeepPartial<FnInterface>,
+    PartialValues = DeepPartial<Values>
 >(
-    defaultVals: FnInterface extends { fn: any } ? never : FnInterface,
-    defaultFn: Fn,
-    merge = deepMerge
-) => (
-    {
-        configure(newVals: ConsumerInterface) {
-            const { fn, ...args } = merge({ fn: defaultFn, ...defaultVals }, newVals)
-            return fennel(args as typeof defaultVals, fn, merge)
-        },
+    values: Values,
+    callbackFn: Callback,
+    callHookFn: CallHook = (res => res) as CallHook,
+    mergeFn: typeof deepMerge = deepMerge
+) => Object.assign(
+    (newValues?: PartialValues) =>
+        callHookFn(callbackFn(mergeFn(values, newValues))),
 
-        call(newVals?: ConsumerInterface) {
-            const { fn, ...args } = merge({ fn: defaultFn, ...defaultVals }, newVals)
-            return fn(args as typeof defaultVals)
-        }
+    {
+        new: (
+            newValues?: PartialValues,
+            callback: Callback = callbackFn,
+            callHook: CallHook = callHookFn,
+            merge: typeof mergeFn = mergeFn,
+        ) =>
+            fennel(merge(values, newValues), callback, callHook, merge),
+
+        values, callbackFn, mergeFn, callHookFn
     }
 )
 
 export type DeepPartial<TObj> = { [Key in keyof TObj]?: TObj[Key] extends Record<string, any> ? DeepPartial<TObj[Key]> : TObj[Key] }
 
-export function deepMerge<TObj, TPartial = DeepPartial<TObj>>(base: TObj, partial?: TPartial): TObj {
+export function deepMerge<Whole, Part>(base: Whole, partial?: Part): Whole {
     const result: any = { ...base }
 
     for (const key in partial)
@@ -34,12 +38,13 @@ export function deepMerge<TObj, TPartial = DeepPartial<TObj>>(base: TObj, partia
                 result[key] = null
 
             else if (Array.isArray(partial[key]))
-                result[key] = result[key].concat(partial[key])
+                result[key] = (result[key] || []).concat(partial[key])
 
             else if (typeof partial[key] === "object")
                 result[key] = deepMerge(result[key], partial[key] || {})
 
-            else result[key] = partial[key]
+            else
+                result[key] = partial[key]
 
-    return result as TObj
+    return result as Whole
 }

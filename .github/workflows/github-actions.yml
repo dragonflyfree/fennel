@@ -13,18 +13,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Cache dependencies
-        uses: actions/cache@v3
-        env:
-          cache-name: cache-dependencies
-        with:
-          path: node_modules
-          key: ${{ runner.os }}-dependencies-${{ env.cache-name }}-${{ hashFiles('bun.lockb') }}
-          restore-keys: |
-            ${{ runner.os }}-dependencies-${{ env.cache-name }}-
-            ${{ runner.os }}-dependencies-
-            ${{ runner.os }}-
-
       - name: Set tag name
         id: get_tag
         run: echo "TAG_NAME=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
@@ -37,6 +25,18 @@ jobs:
           else
             echo "IS_MAIN_BRANCH=false" >> $GITHUB_ENV
           fi
+
+      - name: Cache dependencies
+        uses: actions/cache@v3
+        env:
+          cache-name: cache-dependencies
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-dependencies-${{ env.cache-name }}-${{ hashFiles('bun.lockb') }}
+          restore-keys: |
+            ${{ runner.os }}-dependencies-${{ env.cache-name }}-
+            ${{ runner.os }}-dependencies-
+            ${{ runner.os }}-
 
       - name: Setup Bun
         uses: oven-sh/setup-bun@v1
